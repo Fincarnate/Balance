@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance | Student Life</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #171923;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game {
+            width: min(1100px, 100%);
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #d9d9e5;
+        }
+
+        .scene {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 736 / 414;
+            overflow: hidden;
+            border: 1px solid #55566a;
+            border-radius: 10px;
+            background: #30303b;
+        }
+
+        .scene-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hotspot {
+            position: absolute;
+            border: 2px solid transparent;
+            background: rgba(120, 190, 255, 0.04);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .hotspot:hover,
+        .hotspot:focus-visible {
+            background: rgba(120, 190, 255, 0.22);
+            border-color: #a8d9ff;
+            outline: none;
+        }
+
+        .hotspot-label {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            background: rgba(15, 18, 30, 0.85);
+            color: white;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hotspot:hover .hotspot-label,
+        .hotspot:focus-visible .hotspot-label {
+            opacity: 1;
+        }
+
+        /* Approximate clickable areas on the reference image. */
+
+        .desk {
+            left: 0%;
+            top: 47%;
+            width: 23%;
+            height: 29%;
+        }
+
+        .wardrobe {
+            left: 21%;
+            top: 15%;
+            width: 20%;
+            height: 57%;
+        }
+
+        .bookshelf {
+            left: 44%;
+            top: 57%;
+            width: 17%;
+            height: 19%;
+        }
+
+        .window {
+            left: 45%;
+            top: 18%;
+            width: 24%;
+            height: 34%;
+        }
+
+        .bed {
+            left: 51%;
+            top: 59%;
+            width: 34%;
+            height: 27%;
+        }
+
+        .dialogue {
+            margin-top: 12px;
+            padding: 18px;
+            background: #262938;
+            border: 1px solid #41465b;
+            border-radius: 10px;
+        }
+
+        .dialogue h2 {
+            margin: 0 0 8px;
+            font-size: 18px;
+            color: #b8dfff;
+        }
+
+        .dialogue p {
+            line-height: 1.6;
+            margin: 0;
+            color: #e5e7ef;
+        }
+
+        .choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .choice {
+            padding: 10px 14px;
+            border: 1px solid #7388b8;
+            border-radius: 7px;
+            background: #394968;
+            color: white;
+            cursor: pointer;
+        }
+
+        .choice:hover {
+            background: #4d6289;
+        }
+
+        .status {
+            margin-top: 10px;
+            color: #aeb5c9;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+
+            .dialogue {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="game">
+        <header class="topbar">
+            <strong>BALANCE</strong>
+            <span id="day">Day 1 · Morning</span>
+        </header>
+
+        <section class="scene" aria-label="First-person dorm room">
+            <img
+                class="scene-image"
+                src="/images/dorm-room.png"
+                alt="A dorm room with a desk, wardrobe, bookshelf, window and bed"
+            >
+
+            <button class="hotspot desk"
+                    data-object="desk"
+                    aria-label="Inspect desk">
+                <span class="hotspot-label">Desk</span>
+            </button>
+
+            <button class="hotspot wardrobe"
+                    data-object="wardrobe"
+                    aria-label="Inspect wardrobe">
+                <span class="hotspot-label">Wardrobe</span>
+            </button>
+
+            <button class="hotspot bookshelf"
+                    data-object="bookshelf"
+                    aria-label="Inspect bookshelf">
+                <span class="hotspot-label">Bookshelf</span>
+            </button>
+
+            <button class="hotspot window"
+                    data-object="window"
+                    aria-label="Look through window">
+                <span class="hotspot-label">Window</span>
+            </button>
+
+            <button class="hotspot bed"
+                    data-object="bed"
+                    aria-label="Inspect bed">
+                <span class="hotspot-label">Bed</span>
+            </button>
+        </section>
+
+        <section class="dialogue" aria-live="polite">
+            <h2 id="scene-title">Your Dorm Room</h2>
+
+            <p id="description">
+                Loading your first morning...
+            </p>
+
+            <div class="choices" id="choices">
+                <button class="choice" data-action="continue">
+                    Begin the day
+                </button>
+            </div>
+
+            <p class="status" id="status">
+                Connecting to the game...
+            </p>
+        </section>
+    </main>
+
+    <script>
+        const title = document.getElementById("scene-title");
+        const description = document.getElementById("description");
+        const choices = document.getElementById("choices");
+        const status = document.getElementById("status");
+        const day = document.getElementById("day");
+
+        const objectDescriptions = {
+            desk: {
+                title: "Your Study Desk",
+                text: "Your computer and study materials are waiting. "
+                    + "There may be work to finish before classes begin."
+            },
+            wardrobe: {
+                title: "Your Wardrobe",
+                text: "Your clothes are neatly stored away. "
+                    + "Time to get ready for the day."
+            },
+            bookshelf: {
+                title: "The Bookshelf",
+                text: "Textbooks sit beside a few books you read for fun."
+            },
+            window: {
+                title: "Outside the Window",
+                text: "The campus is beginning to wake up. "
+                    + "You can hear students in the distance."
+            },
+            bed: {
+                title: "Your Bed",
+                text: "You feel like staying under the covers a little longer. "
+                    + "But the day is waiting."
+            }
+        };
+
+        async function loadScene() {
+            try {
+                const response = await fetch("/api/game/intro");
+
+                if (!response.ok) {
+                    throw new Error("Scene API returned " + response.status);
+                }
+
+                const scene = await response.json();
+
+                title.textContent = scene.location;
+                description.textContent = scene.description;
+                day.textContent = "Day " + scene.day + " · Morning";
+                status.textContent = "Scene loaded from the Balance backend.";
+            } catch (error) {
+                status.textContent =
+                    "Could not load the scene from the backend. "
+                    + "Check that Spring Boot is running.";
+                console.error(error);
+            }
+        }
+
+        document.querySelectorAll(".hotspot").forEach(button => {
+            button.addEventListener("click", () => {
+                const object = objectDescriptions[button.dataset.object];
+
+                title.textContent = object.title;
+                description.textContent = object.text;
+
+                choices.innerHTML = "";
+
+                const backButton = document.createElement("button");
+                backButton.className = "choice";
+                backButton.textContent = "Return to the room";
+
+                backButton.addEventListener("click", loadScene);
+                choices.appendChild(backButton);
+            });
+        });
+
+        loadScene();
+    </script>
+</body>
+</html>
